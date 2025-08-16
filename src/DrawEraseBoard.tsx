@@ -11,7 +11,7 @@ export default function DrawEraseBoard() {
 
   const { gridRef } = useGrid(30);
 
-  const { boardRef, handleClear, handleUndo, handleRedo, handleSave } =
+  const { boardRef, handleClear, handleUndo, handleRedo, handleSave, handleSaveServer } =
     useCanvasBoard({
       tool,
       color,
@@ -31,6 +31,7 @@ export default function DrawEraseBoard() {
         onRedo={handleRedo}
         onClear={handleClear}
         onSave={handleSave}
+        onSaveServer={handleSaveServer}
       />
       <CanvasArea gridRef={gridRef} boardRef={boardRef} />
     </div>

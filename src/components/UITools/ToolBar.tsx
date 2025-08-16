@@ -11,6 +11,7 @@ interface ToolbarProps {
   onRedo: () => void;
   onClear: () => void;
   onSave: () => void;
+  onSaveServer: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -24,6 +25,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onRedo,
   onClear,
   onSave,
+  onSaveServer
 }) => {
   return (
     <header className="flex gap-3 flex-wrap items-center p-3 border-b border-white/10 bg-[#111827]">
@@ -78,6 +80,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <button onClick={onRedo}>↪️ Redo</button>
         <button onClick={onClear}>🗑️ Clear</button>
         <button onClick={onSave}>💾 Download</button>
+        <button onClick={onSaveServer}>💾 Upload</button>
       </div>
     </header>
   );
