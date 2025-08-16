@@ -48,7 +48,7 @@ export function useDrawing({
       ctx.moveTo(x, y);
       applyStrokeStyle(pressure);
     },
-    [applyStrokeStyle]
+    [applyStrokeStyle, ctxRef]
   );
 
   const moveStroke = useCallback(
@@ -63,7 +63,7 @@ export function useDrawing({
       ctx.beginPath();
       ctx.moveTo(x, y);
     },
-    [applyStrokeStyle]
+    [applyStrokeStyle, ctxRef]
   );
 
   const endStroke = useCallback(() => {
@@ -71,7 +71,7 @@ export function useDrawing({
     drawingRef.current = false;
     ctxRef.current?.closePath();
     saveSnapshot();
-  }, [saveSnapshot]);
+  }, [saveSnapshot, ctxRef]);
 
   useEffect(() => {
     const canvas = boardRef.current;
