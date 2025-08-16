@@ -24,6 +24,8 @@ export function useCanvasBoard({
     const historyRef = useRef<string[]>([]);
     const futureRef = useRef<string[]>([]);
 
+
+
     const resizeCanvas = () => {
         const canvas = boardRef.current;
         if (!canvas) return;
@@ -68,48 +70,79 @@ export function useCanvasBoard({
         return () => window.removeEventListener("resize", resizeCanvas);
     }, [saveSnapshot]);
 
-    const applyStrokeStyle = useCallback((pressure = 1) => {
-        const ctx = ctxRef.current;
-        if (!ctx) return;
-        const width = Math.max(0.5, size * (pressure || 1));
-        ctx.lineWidth = width;
-        if (tool === "eraser") {
-            ctx.globalCompositeOperation = "destination-out";
-            ctx.strokeStyle = "rgba(0,0,0,1)";
-        } else {
-            ctx.globalCompositeOperation = "source-over";
-            ctx.strokeStyle = color;
-        }
-    }, [tool, color, size]);
+
+    // apply stroke style
+    const applyStrokeStyle = useCallback(
+        (pressure = 1) => {
+            const ctx = ctxRef.current;
+            if (!ctx) return;
+
+            const width = Math.max(0.5, size * (pressure || 1));
+            ctx.lineWidth = width;
+
+            if (tool === "eraser") {
+                ctx.globalCompositeOperation = "destination-out";
+                ctx.strokeStyle = "rgba(0,0,0,1)";
+            } else {
+                ctx.globalCompositeOperation = "source-over";
+                ctx.strokeStyle = color;
+            }
+            ctx.lineCap = "round";   // smoother strokes
+            ctx.lineJoin = "round";  // smoother connections
+        },
+        [tool, color, size]
+    );
+
+    const moveStroke = useCallback(
+        (x: number, y: number, pressure = 1) => {
+            if (!drawingRef.current) return;
+            const ctx = ctxRef.current;
+            if (!ctx) return;
+
+            // ✅ dynamically adjust style for each segment
+            applyStrokeStyle(pressure);
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            // start a new path from here → prevents width "averaging"
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        },
+        [applyStrokeStyle]
+    );
 
 
-    const moveStroke = useCallback((x: number, y: number, pressure = 1) => {
-        if (!drawingRef.current) return;
-        const ctx = ctxRef.current;
-        if (!ctx) return;
-        applyStrokeStyle(pressure);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-    }, [applyStrokeStyle]);
 
 
+    // start a stroke
+    const startStroke = useCallback(
+        (x: number, y: number, pressure = 1) => {
+            drawingRef.current = true;
+            const ctx = ctxRef.current;
+            if (!ctx) return;
 
-    const startStroke = useCallback((x: number, y: number, pressure = 1) => {
-        drawingRef.current = true;
-        const ctx = ctxRef.current;
-        if (!ctx) return;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        applyStrokeStyle(pressure);
-    }, [applyStrokeStyle]);
+            ctx.beginPath();
+            ctx.moveTo(x, y);
 
+            // apply initial style
+            applyStrokeStyle(pressure);
+        },
+        [applyStrokeStyle]
+    );
+
+    // end stroke
     const endStroke = useCallback(() => {
         if (!drawingRef.current) return;
         drawingRef.current = false;
-        ctxRef.current?.closePath();
+
+        const ctx = ctxRef.current;
+        if (ctx) {
+            ctx.closePath();
+        }
+
         saveSnapshot();
     }, [saveSnapshot]);
-
 
 
     useEffect(() => {
@@ -229,3 +262,4 @@ export function useCanvasBoard({
     }
 
 }
+
