@@ -1,45 +1,84 @@
-type ToolBarProps = {
-  sizeControl: React.RefObject<HTMLInputElement>,
-  colorControl: React.RefObject<HTMLInputElement>,
-  sizeValControl: React.RefObject<HTMLSpanElement>,
-  penControl: React.RefObject<HTMLButtonElement>,
-  eraserControl: React.RefObject<HTMLButtonElement>,
-  undoControl: React.RefObject<HTMLButtonElement>,
-  redoControl: React.RefObject<HTMLButtonElement>,
-  clearControl: React.RefObject<HTMLButtonElement>,
-  saveControl: React.RefObject<HTMLButtonElement>,
+import React from "react";
+
+interface ToolbarProps {
+  tool: "pen" | "eraser";
+  setTool: (tool: "pen" | "eraser") => void;
+  color: string;
+  setColor: (color: string) => void;
+  size: number;
+  setSize: (size: number) => void;
+  onUndo: () => void;
+  onRedo: () => void;
+  onClear: () => void;
+  onSave: () => void;
 }
 
-
-export default function ToolBar({
-  sizeControl, colorControl, 
-  sizeValControl,
-  penControl, eraserControl,
-  undoControl, redoControl,
-  clearControl, saveControl
-
-}: ToolBarProps) {
+export const Toolbar: React.FC<ToolbarProps> = ({
+  tool,
+  setTool,
+  color,
+  setColor,
+  size,
+  setSize,
+  onUndo,
+  onRedo,
+  onClear,
+  onSave,
+}) => {
   return (
-    <header>
-    <div className="group" role="group" aria-label="Tool">
-      <button ref={penControl} id="penBtn" aria-pressed="true" title="Pen (P)">✏️ Pen</button>
-      <button ref={eraserControl} id="eraserBtn" aria-pressed="false" title="Eraser (E)">🧽 Eraser</button>
-    </div>
-    <div className="group" role="group" aria-label="Color">
-      <label htmlFor="color">Color</label>
-      <input ref={colorControl} id="color" type="color" />
-    </div>
-    <div className="group" role="group" aria-label="Brush size">
-      <label htmlFor="size">Size</label>
-      <input ref={sizeControl} id="size" type="range" min="1" max="80" step="1" />
-      <span ref={sizeValControl} id="sizeVal">8px</span>
-    </div>
-    <div className="group" role="group" aria-label="Actions">
-      <button ref={undoControl} id="undoBtn" title="Undo (Ctrl/Cmd+Z)">↩️ Undo</button>
-      <button ref={redoControl} id="redoBtn" title="Redo (Ctrl/Cmd+Shift+Z)">↪️ Redo</button>
-      <button ref={clearControl} id="clearBtn" title="Clear (Ctrl/Cmd+K)">🗑️ Clear</button>
-      <button ref={saveControl} id="saveBtn" title="Download PNG (Ctrl/Cmd+S)">💾 Download</button>
-    </div>
-  </header>
-  )
-}
+    <header className="flex gap-3 flex-wrap items-center p-3 border-b border-white/10 bg-[#111827]">
+      {/* Tools */}
+      <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full">
+        <button
+          onClick={() => setTool("pen")}
+          aria-label="Pen tool"
+          aria-pressed={tool === "pen"}
+          className={tool === "pen" ? "outline outline-cyan-400" : ""}
+        >
+          ✏️
+        </button>
+        <button
+          onClick={() => setTool("eraser")}
+          aria-label="Eraser tool"
+          aria-pressed={tool === "eraser"}
+          className={tool === "eraser" ? "outline outline-cyan-400" : ""}
+        >
+          🧽
+        </button>
+      </div>
+
+      {/* Color Picker */}
+      <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full items-center">
+        <label htmlFor="color">Color</label>
+        <input
+          id="color"
+          type="color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+        />
+      </div>
+
+      {/* Size Slider */}
+      <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full items-center">
+        <label htmlFor="size">Size</label>
+        <input
+          id="size"
+          type="range"
+          min={1}
+          max={120}
+          value={size}
+          onChange={(e) => setSize(Number(e.target.value))}
+        />
+        <span>{size}px</span>
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full">
+        <button onClick={onUndo}>↩️ Undo</button>
+        <button onClick={onRedo}>↪️ Redo</button>
+        <button onClick={onClear}>🗑️ Clear</button>
+        <button onClick={onSave}>💾 Download</button>
+      </div>
+    </header>
+  );
+};
