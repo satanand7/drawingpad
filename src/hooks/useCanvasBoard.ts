@@ -187,7 +187,7 @@ export function useCanvasBoard({
         if (!canvas || !ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         saveSnapshot();
-    }, []);
+    }, [saveSnapshot]);
 
     const handleKey = useCallback((e: KeyboardEvent) => {
         if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "z") {
