@@ -3,6 +3,7 @@ import { useHistory } from "./useHistory";
 import { useDrawing } from "./useDrawing";
 import type { Tool } from "../types";
 import { useCallback } from "react";
+import { clearSnapshotsDB } from "../db";
 
 export function useCanvasBoard({
     tool,
@@ -46,8 +47,12 @@ export function useCanvasBoard({
         const ctx = ctxRef.current;
         if (!canvas || !ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        saveSnapshot();
+         clearSnapshotsDB()   
+        // saveSnapshot();
     };
+
+
+   
 
     return { boardRef, handleUndo: undo, handleRedo: redo, handleSave, handleClear, handleSaveServer };
 }
