@@ -21,8 +21,8 @@ export function useCanvasBoard({
     const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
     const drawingRef = useRef<boolean>(false);
 
-    const historyRef = useRef<string[]>([]);
-    const futureRef = useRef<string[]>([]);
+    const historyRef = useRef<ImageData[]>([]);
+    const futureRef = useRef<ImageData[]>([]);
 
     const resizeCanvas = (): void => {
         const canvas = boardRef.current;
@@ -53,13 +53,16 @@ export function useCanvasBoard({
 
     const saveSnapshot = useCallback(() => {
         const canvas = boardRef.current;
-        if (!canvas) return;
+        const ctx = ctxRef.current;
+        if (!canvas || !ctx) return;
 
-        const snapshot = canvas.toDataURL("image/png");
+        const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
         historyRef.current.push(snapshot);
-        if (historyRef.current.length > 100) historyRef.current.shift();
+
+        // clear redo stack when a new action happens
         futureRef.current = [];
     }, []);
+
 
     useEffect(() => {
         resizeCanvas();
@@ -190,52 +193,38 @@ export function useCanvasBoard({
     }, [tool, size, color, endStroke, moveStroke, startStroke]);
 
 
-    const restoreFromDataURL = async (url: string) => {
-        const canvas = boardRef.current;
+    // Restore canvas from ImageData
+    const restoreFromImageData = (imageData: ImageData) => {
         const ctx = ctxRef.current;
-        if (!canvas || !ctx) return;
-
-        try {
-            // Convert dataURL → Blob
-            const response = await fetch(url);
-            const blob = await response.blob();
-
-            // Create bitmap from blob (better than <img>)
-            const bitmap = await createImageBitmap(blob);
-
-            // Clear and redraw
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(bitmap, 0, 0, canvas.width / dpr, canvas.height / dpr);
-
-            // Release memory
-            bitmap.close?.();
-        } catch (err) {
-            console.error("Failed to restore canvas:", err);
-        }
+        if (!ctx) return;
+        ctx.putImageData(imageData, 0, 0);
     };
 
 
 
-    const handleUndo = useCallback(async () => {
+    const handleUndo = useCallback(() => {
         if (historyRef.current.length < 2) return;
 
+        // Move current state to redo stack
         const current = historyRef.current.pop();
         if (current) {
             futureRef.current.push(current);
         }
 
+        // Restore the previous state
         const prev = historyRef.current[historyRef.current.length - 1];
-        if (prev) {
-            await restoreFromDataURL(prev); // now async
-        }
+        if (prev) restoreFromImageData(prev);
     }, []);
 
+    // Redo
     const handleRedo = useCallback(() => {
-        if (!futureRef.current.length) return;
+        if (futureRef.current.length === 0) return;
+
         const next = futureRef.current.pop();
-        if (!next) return;
-        historyRef.current.push(next);
-        restoreFromDataURL(next);
+        if (next) {
+            historyRef.current.push(next);
+            restoreFromImageData(next);
+        }
     }, []);
 
     const handleSave = useCallback(() => {
