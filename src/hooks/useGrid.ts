@@ -1,43 +1,60 @@
 import { useEffect, useRef, useCallback } from "react";
 
-export function useGrid() {
+export function useGrid(lineSpacing = 30) {
   const gridRef = useRef<HTMLCanvasElement>(null!);
 
-  const drawGrid = useCallback((gridCanvas?: HTMLCanvasElement) => {
-    const canvas = gridCanvas ?? gridRef.current;
+  const drawGrid = useCallback(() => {
+    const canvas = gridRef.current;
     if (!canvas) return;
-    const gridCtx = canvas.getContext("2d");
-    if (!gridCtx) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const { width, height } = canvas.getBoundingClientRect();
-    gridCtx.clearRect(0, 0, width, height);
-    gridCtx.strokeStyle = "rgba(255,255,255,0.1)";
-    gridCtx.lineWidth = 1;
-    const lineSpacing = 30;
+    const { width, height } = canvas;
+    ctx.clearRect(0, 0, width, height);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.lineWidth = 1;
+
     for (let y = lineSpacing; y < height; y += lineSpacing) {
-      gridCtx.beginPath();
-      gridCtx.moveTo(0, y);
-      gridCtx.lineTo(width, y);
-      gridCtx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
     }
-  }, []);
+  }, [lineSpacing]);
 
   const resizeCanvas = useCallback(() => {
     const canvas = gridRef.current;
     if (!canvas) return;
-    const { clientWidth: w, clientHeight: h } = canvas.parentElement as HTMLElement;
+    const parent = canvas.parentElement as HTMLElement;
+    if (!parent) return;
 
-    canvas.width = w;
-    canvas.height = h;
+    const dpr = window.devicePixelRatio || 1;
+    const w = parent.clientWidth;
+    const h = parent.clientHeight;
+
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = `${w}px`;
+    canvas.style.height = `${h}px`;
+
+    const ctx = canvas.getContext("2d");
+    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     drawGrid();
   }, [drawGrid]);
 
-  
-
   useEffect(() => {
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-    return () => window.removeEventListener("resize", resizeCanvas);
+    let frame: number;
+    const handler = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(resizeCanvas);
+    };
+    window.addEventListener("resize", handler);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", handler);
+    };
   }, [resizeCanvas]);
 
   return { gridRef } as const;
