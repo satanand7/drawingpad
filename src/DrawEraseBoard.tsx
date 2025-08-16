@@ -6,7 +6,6 @@ export default function DrawEraseBoard() {
 
     const [color, setColor] = useState<string>("#22d3ee");
     const [size, setSize] = useState<number>(8);
-    const [sizeLabel, setSizeLabel] = useState<string>("8px");
     const [tool, setTool] = useState<"pen" | "eraser">("pen");
 
     const { gridRef } = useGrid();
@@ -26,19 +25,22 @@ export default function DrawEraseBoard() {
                 <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full">
                     <button
                         onClick={() => setTool("pen")}
+                        aria-label="Pen tool"
                         aria-pressed={tool === "pen"}
                         className={tool === "pen" ? "outline outline-cyan-400" : ""}
                     >
-                        ✏️ Pen
+                        ✏️
                     </button>
                     <button
                         onClick={() => setTool("eraser")}
+                        aria-label="Eraser tool"
                         aria-pressed={tool === "eraser"}
                         className={tool === "eraser" ? "outline outline-cyan-400" : ""}
                     >
-                        🧽 Eraser
+                        🧽
                     </button>
                 </div>
+
                 <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full items-center">
                     <label htmlFor="color">Color</label>
                     <input
@@ -59,10 +61,9 @@ export default function DrawEraseBoard() {
                         onChange={(e) => {
                             const val = Number(e.target.value);
                             setSize(val);
-                            setSizeLabel(val + "px");
                         }}
                     />
-                    <span>{sizeLabel}</span>
+                    <span>{size}px</span>
                 </div>
                 <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full">
                     <button onClick={handleUndo}>↩️ Undo</button>
