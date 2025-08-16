@@ -26,7 +26,12 @@ export function useCanvasBoard({
 
 
 
-    const resizeCanvas = () => {
+    /**
+     * Resizes the canvas element to match its parent container.
+     *
+     * @returns {void}
+     */
+    const resizeCanvas = (): void => {
         const canvas = boardRef.current;
         if (!canvas) return;
 
@@ -42,11 +47,13 @@ export function useCanvasBoard({
 
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
+
         ctx.setTransform(1, 0, 0, 1, 0, 0); // reset scale before applying again
         ctx.scale(dpr, dpr);
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.imageSmoothingEnabled = true;
+
         ctxRef.current = ctx;
     };
 
@@ -149,6 +156,9 @@ export function useCanvasBoard({
         const canvas = boardRef.current;
         if (!canvas) return;
 
+        let rafId: number | null = null;
+
+
         const handleDown = (e: PointerEvent) => {
             const rect = canvas.getBoundingClientRect();
             startStroke(e.clientX - rect.left, e.clientY - rect.top, e.pressure);
@@ -157,7 +167,14 @@ export function useCanvasBoard({
         const handleMove = (e: PointerEvent) => {
             if (!drawingRef.current) return;
             const rect = canvas.getBoundingClientRect();
-            moveStroke(e.clientX - rect.left, e.clientY - rect.top, e.pressure);
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const pressure = e.pressure;
+            if(rafId !== null) return;
+            rafId = window.requestAnimationFrame(() => {
+                rafId = null;
+                moveStroke(x, y, pressure);
+            })
         };
 
         canvas.addEventListener("pointerdown", handleDown);
@@ -166,9 +183,18 @@ export function useCanvasBoard({
             canvas.addEventListener(t, endStroke)
         );
 
+
+
         return () => {
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
             canvas.removeEventListener("pointerdown", handleDown);
             canvas.removeEventListener("pointermove", handleMove);
+            ["pointerup", "pointercancel", "pointerleave"].forEach((t) =>
+                canvas.removeEventListener(t, endStroke)
+            );
         };
     }, [tool, size, color, endStroke, moveStroke, startStroke]);
 
