@@ -8,11 +8,10 @@ export default function DrawEraseBoard() {
     const [size, setSize] = useState<number>(8);
     const [tool, setTool] = useState<"pen" | "eraser">("pen");
 
-    const { gridRef } = useGrid();
+    const { gridRef } = useGrid(30);
 
     const { boardRef, handleClear, handleUndo, handleRedo, handleSave } = useCanvasBoard({
         tool,
-        setTool,
         color,
         size,
     });
