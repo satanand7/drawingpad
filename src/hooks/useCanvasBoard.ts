@@ -3,21 +3,13 @@ import { useHistory } from "./useHistory";
 import { useDrawing } from "./useDrawing";
 import { useCallback } from "react";
 import { clearSnapshotsDB } from "../db";
-import { useSelector } from "react-redux";
-import type { RootState } from "../store";
 
 export function useCanvasBoard() {
-
-
-    const tool = useSelector((state: RootState) => state.drawing.tool);
-    const color = useSelector((state: RootState) => state.drawing.color);
-    const size = useSelector((state: RootState) => state.drawing.size);
-
-
+    
     const { boardRef, ctxRef } = useCanvasContext();
     const { saveSnapshot, undo, redo } = useHistory(ctxRef, boardRef);
 
-    useDrawing({ boardRef, ctxRef, tool, color, size, saveSnapshot });
+    useDrawing({ boardRef, ctxRef, saveSnapshot });
 
 
 

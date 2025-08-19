@@ -1,21 +1,21 @@
 import { useRef, useEffect, useCallback } from "react";
-import type { Tool } from "../types";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
 
 export function useDrawing({
   boardRef,
   ctxRef,
-  tool,
-  color,
-  size,
   saveSnapshot,
 }: {
   boardRef: React.RefObject<HTMLCanvasElement>;
   ctxRef: React.RefObject<CanvasRenderingContext2D>;
-  tool: Tool;
-  color: string;
-  size: number;
   saveSnapshot: () => void;
 }) {
+
+  const tool = useSelector((state: RootState) => state.drawing.tool);
+  const color = useSelector((state: RootState) => state.drawing.color);
+  const size = useSelector((state: RootState) => state.drawing.size);
+
   const drawingRef = useRef(false);
 
   const applyStrokeStyle = useCallback(
