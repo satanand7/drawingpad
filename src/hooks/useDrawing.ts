@@ -31,6 +31,7 @@ export function useDrawing({
 
       if (tool === "eraser") {
         ctx.globalCompositeOperation = "destination-out";
+        ctx.lineWidth = size;
         ctx.strokeStyle = "rgba(0,0,0,1)";
       } else {
         ctx.globalCompositeOperation = "source-over";
