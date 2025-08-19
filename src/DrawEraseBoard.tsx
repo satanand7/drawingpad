@@ -2,6 +2,7 @@ import { useGrid } from "./hooks/useGrid";
 import { useCanvasBoard } from "./hooks/useCanvasBoard";
 import { Toolbar } from "./components/UITools/ToolBar";
 import { CanvasArea } from "./components/UITools/CanvasArea";
+import CursorOverlay from "./components/UITools/CursorOverlay";
 
 
 export default function DrawEraseBoard() {
@@ -19,6 +20,7 @@ export default function DrawEraseBoard() {
         onSaveServer={handleSaveServer}
       />
       <CanvasArea gridRef={gridRef} boardRef={boardRef} />
+      <CursorOverlay boardRef={boardRef} />
     </div>
   );
 }

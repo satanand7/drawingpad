@@ -42,7 +42,8 @@ header .group {
     background: var(--panel);
     padding: .5rem .75rem;
     border-radius: 999px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, .05) inset
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .05) inset;
+    z-index: 9999;
 }
 
 label {
@@ -96,7 +97,7 @@ canvas {
     height: 100%;
     touch-action: none;
     background: #d7d8da00;
-    position: absolute;
+    /* position: absolute; */
     top: 0;
     left: 0
 }
