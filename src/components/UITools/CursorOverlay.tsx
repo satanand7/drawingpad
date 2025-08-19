@@ -6,7 +6,7 @@ import type { RootState } from "../../store";
 export default function CursorOverlay({ boardRef }: { boardRef: React.RefObject<HTMLCanvasElement> }) {
   const tool = useSelector((state: RootState) => state.drawing.tool);
   const color = useSelector((state: RootState) => state.drawing.color);
-  const size = useSelector((state: RootState) => state.drawing.size);
+  const eraserSize = useSelector((state: RootState) => state.drawing.eraserSize);
 
   const cursorRef = useRef<HTMLDivElement>(null);
 
@@ -34,8 +34,8 @@ export default function CursorOverlay({ boardRef }: { boardRef: React.RefObject<
         cursor.style.background = color;
         cursor.style.opacity = "0.6";
       } else if (tool === "eraser") {
-        cursor.style.width = `${size}px`;
-        cursor.style.height = `${size}px`;
+        cursor.style.width = `${eraserSize}px`;
+        cursor.style.height = `${eraserSize}px`;
         cursor.style.border = "2px solid #000";
         cursor.style.background = "#fff";
         cursor.style.opacity = "0.8";
@@ -47,7 +47,7 @@ export default function CursorOverlay({ boardRef }: { boardRef: React.RefObject<
       canvas.style.cursor = "default";
       canvas.removeEventListener("pointermove", handleMove);
     };
-  }, [boardRef, tool, color, size]);
+  }, [boardRef, tool, color, eraserSize]);
 
   return (
     <div

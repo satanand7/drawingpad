@@ -5,6 +5,8 @@ import type { DrawingState, Tool } from "../types";
 const initialState: DrawingState = {
     tool: "pen",
     color: "#22d3ee",
+    penSize: 8,
+    eraserSize: 8,
     size: 8,
     showGrid: true,
     lineSpacing: 30
@@ -22,8 +24,16 @@ const drawingSlice = createSlice({
             console.log(action.payload);
             state.color = action.payload;
         },
+        setPenSize: (state, action: PayloadAction<number>) => {
+            state.penSize = action.payload;
+        },
         setSize: (state, action: PayloadAction<number>) => {
-            state.size = action.payload;
+            if (state.tool === "eraser") {
+                state.eraserSize = action.payload;
+            }
+            if (state.tool === "pen"){
+                state.penSize = action.payload;
+            }
         },
         toggleGrid: (state, action: PayloadAction<boolean>) => {
             state.showGrid = action.payload;

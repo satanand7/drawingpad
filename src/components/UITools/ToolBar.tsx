@@ -21,9 +21,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
   const tool = useSelector((state: RootState) => state.drawing.tool);
   const color = useSelector((state: RootState) => state.drawing.color);
-  const size = useSelector((state: RootState) => state.drawing.size);
+  const penSize = useSelector((state: RootState) => state.drawing.penSize);
+  const eraserSize = useSelector((state: RootState) => state.drawing.eraserSize);
   const showGrid = useSelector((state: RootState) => state.drawing.showGrid);
   const lineSpacing = useSelector((state:RootState)=> state.drawing.lineSpacing)
+  const size = tool === "pen" ? penSize : eraserSize;
 
 
   const dispatch: AppDispatch = useDispatch();
@@ -76,7 +78,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           min={1}
           max={120}
           value={size}
-          onChange={(e) => dispatch(actions.setSize(Number(e.target.value)))}
+          onChange={(e) => {
+            dispatch(actions.setSize(Number(e.target.value)));
+          }}
         />
         <span>{size}px</span>
       </div>

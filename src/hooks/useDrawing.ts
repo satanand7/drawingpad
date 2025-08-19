@@ -14,7 +14,9 @@ export function useDrawing({
 
   const tool = useSelector((state: RootState) => state.drawing.tool);
   const color = useSelector((state: RootState) => state.drawing.color);
-  const size = useSelector((state: RootState) => state.drawing.size);
+  const penSize = useSelector((state: RootState) => state.drawing.penSize);
+  const eraserSize = useSelector((state: RootState) => state.drawing.eraserSize);
+  const size = tool === "pen" ? penSize : eraserSize;
 
   const drawingRef = useRef(false);
 
