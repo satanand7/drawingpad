@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
 
-export function useGrid(lineSpacing = 30) {
+export function useGrid(lineSpacing = 30, showGrid = true) {
   const gridRef = useRef<HTMLCanvasElement>(null!);
 
   const drawGrid = useCallback(() => {
@@ -39,9 +39,10 @@ export function useGrid(lineSpacing = 30) {
 
     const ctx = canvas.getContext("2d");
     if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    drawGrid();
-  }, [drawGrid]);
+    if (showGrid) {
+      drawGrid();
+    }
+  }, [showGrid, drawGrid]);
 
   useEffect(() => {
     resizeCanvas();

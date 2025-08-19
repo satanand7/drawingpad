@@ -6,12 +6,16 @@ interface ToolbarProps {
   color: string;
   setColor: (color: string) => void;
   size: number;
+  showGrid: boolean;
   setSize: (size: number) => void;
+  lineSpacing: number;
   onUndo: () => void;
   onRedo: () => void;
   onClear: () => void;
   onSave: () => void;
   onSaveServer: () => void;
+  toggleGrid: () => void;
+  onChangeGridSize: (size: number) => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -21,11 +25,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   setColor,
   size,
   setSize,
+  showGrid,
+  lineSpacing,
+  toggleGrid,
   onUndo,
   onRedo,
   onClear,
   onSave,
-  onSaveServer
+  onSaveServer,
+  onChangeGridSize
 }) => {
   return (
     <header className="flex gap-3 flex-wrap items-center p-3 border-b border-white/10 bg-[#111827]">
@@ -72,6 +80,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           onChange={(e) => setSize(Number(e.target.value))}
         />
         <span>{size}px</span>
+      </div>
+
+      <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full items-center">
+        <input type="checkbox" id="grid" checked={showGrid} onChange={toggleGrid} />
+        <label htmlFor="grid">
+          Grid
+        </label>
+        {showGrid && <input type="range" min={30} max={120} value={lineSpacing} onChange={(e) => onChangeGridSize(Number(e.target.value))} />}
       </div>
 
       {/* Actions */}

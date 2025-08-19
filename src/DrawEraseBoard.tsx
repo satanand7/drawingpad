@@ -8,8 +8,10 @@ export default function DrawEraseBoard() {
   const [color, setColor] = useState<string>("#22d3ee");
   const [size, setSize] = useState<number>(8);
   const [tool, setTool] = useState<"pen" | "eraser">("pen");
+  const [showGrid, setShowGrid] = useState<boolean>(true);
+  const [lineSpacing, setLineSpacing] = useState<number>(30);
 
-  const { gridRef } = useGrid(30);
+  const { gridRef } = useGrid(lineSpacing, showGrid);
 
   const { boardRef, handleClear, handleUndo, handleRedo, handleSave, handleSaveServer } =
     useCanvasBoard({
@@ -19,7 +21,7 @@ export default function DrawEraseBoard() {
     });
 
   return (
-    <div className="h-screen flex flex-col bg-[#0f172a] text-gray-200">
+    <div className="h-screen flex flex-col bg-[#0f172a00] text-gray-200">
       <Toolbar
         tool={tool}
         setTool={setTool}
@@ -27,6 +29,10 @@ export default function DrawEraseBoard() {
         setColor={setColor}
         size={size}
         setSize={setSize}
+        showGrid={showGrid}
+        toggleGrid={() => setShowGrid(!showGrid)}
+        onChangeGridSize={setLineSpacing}
+        lineSpacing={lineSpacing}
         onUndo={handleUndo}
         onRedo={handleRedo}
         onClear={handleClear}
