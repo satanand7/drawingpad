@@ -6,7 +6,7 @@ const initialState: DrawingState = {
     tool: "pen",
     color: "#22d3ee",
     penSize: 8,
-    eraserSize: 8,
+    eraserSize: 70,
     size: 8,
     showGrid: true,
     lineSpacing: 30
