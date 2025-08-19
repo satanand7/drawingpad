@@ -31,7 +31,7 @@ const drawingSlice = createSlice({
             if (state.tool === "eraser") {
                 state.eraserSize = action.payload;
             }
-            if (state.tool === "pen"){
+            if (state.tool === "pen") {
                 state.penSize = action.payload;
             }
         },
@@ -45,10 +45,41 @@ const drawingSlice = createSlice({
     },
 });
 
+
+function loadDrawingState(): { drawing: DrawingState } | undefined {
+    try {
+        const serialized = localStorage.getItem("drawingState");
+        if (!serialized) return undefined;
+        return { drawing: JSON.parse(serialized) as DrawingState };
+    } catch {
+        return undefined;
+    }
+}
+
+const preloadedState = loadDrawingState();
+
+
+
 const store = configureStore({
     reducer: {
         drawing: drawingSlice.reducer,
     },
+    preloadedState,
+});
+
+
+function saveDrawingState(state: DrawingState) {
+    try {
+        const serialized = JSON.stringify(state);
+        localStorage.setItem("drawingState", serialized);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+store.subscribe(() => {
+    const state = store.getState();
+    saveDrawingState(state.drawing);
 });
 
 export const actions = drawingSlice.actions;
