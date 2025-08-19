@@ -4,15 +4,11 @@ import { actions, type AppDispatch, type RootState } from "../../store";
 import { useDebounce } from "../../hooks/useDebounce";
 
 interface ToolbarProps {
-  showGrid: boolean;
-  lineSpacing: number;
   onUndo: () => void;
   onRedo: () => void;
   onClear: () => void;
   onSave: () => void;
   onSaveServer: () => void;
-  toggleGrid: () => void;
-  onChangeGridSize: (size: number) => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
