@@ -6,11 +6,11 @@ import { CanvasArea } from "./components/UITools/CanvasArea";
 
 
 export default function DrawEraseBoard() {
-  
+
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [lineSpacing, setLineSpacing] = useState<number>(30);
 
-  const { gridRef } = useGrid(lineSpacing, showGrid);
+  const { gridRef } = useGrid();
 
   const { boardRef, handleClear, handleUndo, handleRedo, handleSave, handleSaveServer } =
     useCanvasBoard();

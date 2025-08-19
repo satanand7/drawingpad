@@ -6,6 +6,8 @@ const initialState: DrawingState = {
     tool: "pen",
     color: "#22d3ee",
     size: 8,
+    showGrid: true,
+    lineSpacing: 30
 };
 
 
@@ -22,6 +24,13 @@ const drawingSlice = createSlice({
         },
         setSize: (state, action: PayloadAction<number>) => {
             state.size = action.payload;
+        },
+        toggleGrid: (state, action: PayloadAction<boolean>) => {
+            state.showGrid = action.payload;
+        },
+        setLineSpacing: (state, action: PayloadAction<number>) => {
+            console.log(action.payload);
+            state.lineSpacing = action.payload;
         },
     },
 });

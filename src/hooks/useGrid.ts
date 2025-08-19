@@ -1,6 +1,13 @@
 import { useEffect, useRef, useCallback } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
 
-export function useGrid(lineSpacing = 30, showGrid = true) {
+export function useGrid() {
+
+  const lineSpacing = useSelector((state:RootState)=> state.drawing.lineSpacing)
+  const showGrid = useSelector((state:RootState)=> state.drawing.showGrid)
+
+
   const gridRef = useRef<HTMLCanvasElement>(null!);
 
   const drawGrid = useCallback(() => {

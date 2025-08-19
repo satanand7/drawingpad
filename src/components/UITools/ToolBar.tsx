@@ -16,20 +16,18 @@ interface ToolbarProps {
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
-  showGrid,
-  lineSpacing,
-  toggleGrid,
   onUndo,
   onRedo,
   onClear,
   onSave,
   onSaveServer,
-  onChangeGridSize
 }) => {
 
   const tool = useSelector((state: RootState) => state.drawing.tool);
   const color = useSelector((state: RootState) => state.drawing.color);
   const size = useSelector((state: RootState) => state.drawing.size);
+  const showGrid = useSelector((state: RootState) => state.drawing.showGrid);
+  const lineSpacing = useSelector((state:RootState)=> state.drawing.lineSpacing)
 
 
   const dispatch: AppDispatch = useDispatch();
@@ -88,11 +86,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       </div>
 
       <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full items-center">
-        <input type="checkbox" id="grid" checked={showGrid} onChange={toggleGrid} />
+        <input type="checkbox" id="grid" checked={showGrid} onChange={() => dispatch(actions.toggleGrid(!showGrid))} />
         <label htmlFor="grid">
           Grid
         </label>
-        {showGrid && <input type="range" min={30} max={120} value={lineSpacing} onChange={(e) => onChangeGridSize(Number(e.target.value))} />}
+        {showGrid && <span className="flex items-center gap-2"><input type="range" min={30} max={120} value={lineSpacing} onChange={(e) => dispatch(actions.setLineSpacing(Number(e.target.value)))} /> {lineSpacing}px</span>}
       </div>
 
       {/* Actions */}
