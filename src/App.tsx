@@ -1,8 +1,11 @@
 import DrawEraseBoard from './DrawEraseBoard'
+import StoreProvider from './store/StoreProvider'
 
 function App() {
   return (
-    <DrawEraseBoard />
+    <StoreProvider>
+      <DrawEraseBoard />
+    </StoreProvider>
   )
   
 }

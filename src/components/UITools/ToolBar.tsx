@@ -1,13 +1,10 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { actions, type AppDispatch, type RootState } from "../../store";
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface ToolbarProps {
-  tool: "pen" | "eraser";
-  setTool: (tool: "pen" | "eraser") => void;
-  color: string;
-  setColor: (color: string) => void;
-  size: number;
   showGrid: boolean;
-  setSize: (size: number) => void;
   lineSpacing: number;
   onUndo: () => void;
   onRedo: () => void;
@@ -19,12 +16,6 @@ interface ToolbarProps {
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
-  tool,
-  setTool,
-  color,
-  setColor,
-  size,
-  setSize,
   showGrid,
   lineSpacing,
   toggleGrid,
@@ -35,12 +26,23 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onSaveServer,
   onChangeGridSize
 }) => {
+
+  const tool = useSelector((state: RootState) => state.drawing.tool);
+  const color = useSelector((state: RootState) => state.drawing.color);
+  const size = useSelector((state: RootState) => state.drawing.size);
+
+
+  const dispatch: AppDispatch = useDispatch();
+
+  const debounce = useDebounce(500);
+
+
   return (
     <header className="flex gap-3 flex-wrap items-center p-3 border-b border-white/10 bg-[#111827]">
       {/* Tools */}
       <div className="flex gap-2 bg-[#1f2937] px-3 py-2 rounded-full">
         <button
-          onClick={() => setTool("pen")}
+          onClick={() => dispatch(actions.setTool("pen"))}
           aria-label="Pen tool"
           aria-pressed={tool === "pen"}
           className={tool === "pen" ? "outline outline-cyan-400" : ""}
@@ -48,7 +50,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           ✏️
         </button>
         <button
-          onClick={() => setTool("eraser")}
+          onClick={() => dispatch(actions.setTool("eraser"))}
           aria-label="Eraser tool"
           aria-pressed={tool === "eraser"}
           className={tool === "eraser" ? "outline outline-cyan-400" : ""}
@@ -64,7 +66,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           id="color"
           type="color"
           value={color}
-          onChange={(e) => setColor(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;   // capture value synchronously
+            debounce(() => dispatch(actions.setColor(value)));
+          }}
         />
       </div>
 
@@ -77,7 +82,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           min={1}
           max={120}
           value={size}
-          onChange={(e) => setSize(Number(e.target.value))}
+          onChange={(e) => dispatch(actions.setSize(Number(e.target.value)))}
         />
         <span>{size}px</span>
       </div>
