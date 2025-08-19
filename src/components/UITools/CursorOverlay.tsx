@@ -19,9 +19,11 @@ export default function CursorOverlay({ boardRef }: { boardRef: React.RefObject<
     canvas.style.cursor = "none";
 
     const handleMove = (e: PointerEvent) => {
-    //   const rect = canvas.getBoundingClientRect();
+      //   const rect = canvas.getBoundingClientRect();
       const x = e.clientX
       const y = e.clientY
+      cursor.style.display = "block"; // show cursor
+
 
       cursor.style.left = `${x}px`;
       cursor.style.top = `${y}px`;
@@ -42,7 +44,13 @@ export default function CursorOverlay({ boardRef }: { boardRef: React.RefObject<
       }
     };
 
+    const handleLeave = () => {
+      cursor.style.display = "none"; // hide cursor when outside
+    };
+
     canvas.addEventListener("pointermove", handleMove);
+    canvas.addEventListener("pointerleave", handleLeave);
+
     return () => {
       canvas.style.cursor = "default";
       canvas.removeEventListener("pointermove", handleMove);
